@@ -36,7 +36,29 @@ class Plants(Resource):
         db.session.commit()
 
         return make_response(new_plant.to_dict(), 201)
+    
+    def patch(self, id):
+        plant = Plant.query.get(id)
+        if plant is None:
+            abort(404, description="Plant not found.")
 
+        data = request.get_json()
+        if 'is_in_stock' in data:
+            plant.is_in_stock = data['is_in_stock']
+
+        db.session.commit()
+
+        return make_response(plant.to_dict(), 200)
+
+    def delete(self, id):
+        plant = Plant.query.get(id)
+        if plant is None:
+            abort(404, description="Plant not found.")
+
+        db.session.delete(plant)
+        db.session.commit()
+
+        return '', 204
 
 api.add_resource(Plants, '/plants')
 
